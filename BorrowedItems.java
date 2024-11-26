@@ -55,7 +55,7 @@ public class BorrowedItems{
         boolean itemFound = false;
 
         for (BorrowedItems borrowInfo : borrowList) { //checking the array first 
-         if (borrowInfo.getUsername() == userId){
+         if (borrowInfo.getUsername().equals(userId)){
             System.out.println("User is found on the borrow list");
             if (borrowInfo.getItemId() == itemId) {
                 itemFound = true;
