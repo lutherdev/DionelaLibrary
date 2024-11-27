@@ -81,8 +81,13 @@ public class Main2{
                             System.out.print("Enter the quantity of the item you want to borrow: ");
                             int quantity = scan.nextInt(); // kunin si quantity ng item na gusto iborrow ni Costomer
                             scan.nextLine();
-                            Library1.borrowItem(quantity, itemId); //the item gets minus
-                            userBI.Borrowitems(acc.getUserID(), itemId, quantity); //saves the one who borrows and what item borrowed and how many
+                            
+                            if (Library1.borrowItem(quantity, itemId) == 1){//the item gets minus
+                                userBI.Borrowitems(acc.getUserID(), itemId, quantity); //saves the one who borrows and what item borrowed and how many
+                            }
+                            else {System.out.println("SOME ERROR IN YOUR INPUTS BRO");}
+            
+
                             System.out.print("Do you want to borrow again? [1] - Yes / [2] - No: ");
                             loop = scan.nextInt();
                             scan.nextLine();
@@ -102,13 +107,16 @@ public class Main2{
                             System.out.print("How many do you want to return?: ");
                             int quantity = scan.nextInt();
                             scan.nextLine();
-
-                            if (userBI.checkQuanti(itemId, quantity) == 1){
-                                Library1.returnItem(itemId, quantity);
-                                userBI.Returnitems(username, itemId, quantity);
+                            if (userBI.checkQuanti(username, itemId, quantity) == 1){
+                                if (userBI.Returnitems(username, itemId, quantity) == 1){
+                                    Library1.returnItem(itemId, quantity);
+                                }
+                                else {System.out.println("YOU HAVENT BORROWED THAT ITEM...");
+                                return;
+                            }
                             }
                             else {
-                                System.out.println("EXITTING.");
+                                System.out.println("LOADING.");
                             }
                             
                          System.out.print("AGAIN? (y1/n2): ");
