@@ -236,7 +236,7 @@ public class Library {
         System.out.println("Quantity: " + getQuantity());
     }
 
-    public void borrowItem(int quantity, int itemId) {
+    public int borrowItem(int quantity, int itemId) {
         Scanner scan = new Scanner(System.in);
             for (Library items : availableItems) {
                 if (items.getItemId() == itemId) { // PUT A CONDITION NA KAPAG MERON PANG QUANTITY OR WALA
@@ -244,12 +244,14 @@ public class Library {
                         items.quantity = (items.quantity - quantity);
                         System.out.println("\nUpdated Quantity of "+ items.getTitle() + ": " + items.getQuantity());
                         saveItemsToFile();
-                        break;
+                        return 1;
                     } else {
                         System.out.println("Not enough quantity available.");
+                        return 2;
                     }
                 }
             }
+            return 2;
     }
 
     // RETURNING METHODSSS
