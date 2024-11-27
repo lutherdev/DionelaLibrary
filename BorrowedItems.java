@@ -23,12 +23,6 @@ public class BorrowedItems{
     this.quantity = quantity;
     }
 
-    
-    public BorrowedItems(Library e){
-        this.library1 = e;
-        this.libraryItemsCopy = e.getItemDataList();
-        this.username = "";
-    }
 
     public BorrowedItems(){
         //this.libraryItemsCopy = e.getItemDataList();
@@ -36,22 +30,42 @@ public class BorrowedItems{
         fileTolistBorrow();
     }
 
-    public int checkQuanti(int itemId, int quantity){
-        for (BorrowedItems borrowInfo : borrowList) {
-            if (borrowInfo.getItemId() == itemId){
-                if (quantity > borrowInfo.getQuantity()) {
-                    System.out.println("Your return is greater than borrowed quantity!");
-                    System.out.println("You only borrowed: " + borrowInfo.getQuantity());
-                    return 2;
-                    //return some specific int para di matawag ung return item ng borrowinfo
+    public int checkList(String user, int itemid){
+        for (BorrowedItems borrowInfo : borrowList){
+            if (borrowInfo.getUsername().equals(user)){
+                if (borrowInfo.getItemId() == itemid){
+                    return 1;
                 }
-            }            
-            else return 1;
+            }
         }
-        return 1;
+        return 2;
     }
 
-    public void Returnitems(String userId, int itemid, int quantity){
+
+    public int checkQuanti(String user, int itemId, int quantity){
+        for (BorrowedItems borrowInfo : borrowList) {
+            if (borrowInfo.getUsername().equals(user)){
+                if (borrowInfo.getItemId() == itemId){
+                    if (quantity > borrowInfo.getQuantity()) {
+                        System.out.println("Your return is greater than borrowed quantity!");
+                        System.out.println("You only borrowed: " + borrowInfo.getQuantity());
+                        return 2;
+                        //return some specific int para di matawag ung return item ng borrowinfo
+                    } else return 1;
+                }            
+                else {
+                    System.out.println("You haven't borrowed someth like that");
+                    return 1;
+                }
+            }
+            else {
+                System.out.println("User haven't borrowed anything");
+            }
+        }
+        return 2;
+    }
+
+    public int Returnitems(String userId, int itemid, int quantity){
         boolean itemFound = false;
 
         for (BorrowedItems borrowInfo : borrowList) { //checking the array first 
@@ -67,7 +81,7 @@ public class BorrowedItems{
                 borrowList.remove(borrowInfo); // mareremove sa borrowers file yung nag borrow pag
                                                                    // nag reach ng 0 yung quantity
                 borrowListTOfile(); // pang save sa file
-                return;
+                return 1;
                         }
             else {
                 System.out.println("You have not returned everything yet you still have " + borrowInfo.quantity + " & ano " + borrowInfo.getQuantity());
@@ -77,13 +91,15 @@ public class BorrowedItems{
          }
          else {
             System.out.println("No user found on borrowers");
-            return;
+            return 2;
         }
                }
             if (!itemFound) {
-                System.out.println("You " + userId + "Haven't borrowed an ");
-                System.out.println("item with ID " + itemId);
+                System.out.println("You " + userId + " Haven't borrowed an ");
+                System.out.println("item with ID " + itemid);
+                return 2;
             }
+            return 1;
     }
 
 
