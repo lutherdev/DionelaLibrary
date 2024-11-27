@@ -57,20 +57,24 @@ public class BorrowedItems{
         for (BorrowedItems borrowInfo : borrowList) { //checking the array first 
          if (borrowInfo.getUsername().equals(userId)){
             System.out.println("User is found on the borrow list");
-            if (borrowInfo.getItemId() == itemId) {
+            if (borrowInfo.getItemId() == itemid) {
                 itemFound = true;
                 System.out.println("Item also is found that you borrowed it.");
                 borrowInfo.setQuantity(borrowInfo.getQuantity() - quantity); //changing the quantity based on returned
                 
                 if (borrowInfo.getQuantity() == 0) {
                 System.out.println("All items returned");
-                BorrowedItems userBItoremove = new BorrowedItems(userId, itemid, borrowInfo.getQuantity());
-                borrowList.remove(userBItoremove); // mareremove sa borrowers file yung nag borrow pag
+                borrowList.remove(borrowInfo); // mareremove sa borrowers file yung nag borrow pag
                                                                    // nag reach ng 0 yung quantity
                 borrowListTOfile(); // pang save sa file
-                break;
+                return;
                         }
-                    
+            else {
+                System.out.println("You have not returned everything yet you still have " + borrowInfo.quantity + " & ano " + borrowInfo.getQuantity());
+                borrowListTOfile();
+            }
+                
+
                 }
          }
          else {
@@ -114,7 +118,7 @@ public class BorrowedItems{
             for (BorrowedItems borrowInfo : borrowList) {
                 writer.write(borrowInfo.username + ", " + borrowInfo.itemId + ", " + borrowInfo.quantity + "\n");
             }
-         
+         System.out.println("borrowlist success written to file");
         } catch (IOException e) {
             System.out.println("An error occurred while saving borrowers to the file.");
             e.printStackTrace();
