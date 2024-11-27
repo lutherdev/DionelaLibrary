@@ -73,8 +73,6 @@ public class BorrowedItems{
                 System.out.println("You have not returned everything yet you still have " + borrowInfo.quantity + " & ano " + borrowInfo.getQuantity());
                 borrowListTOfile();
             }
-                
-
                 }
          }
          else {
@@ -152,7 +150,6 @@ public void fileTolistBorrow() { //gaya ng sa Library sa additemss
 
 
 public void displayBorrowers(String name){ //hindi ituu ataa, test tuu
-    fileTolistBorrow();
     boolean ifFound = false;
     if(borrowList.size() == 0){
         System.out.println("No borrowers yet.");
