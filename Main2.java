@@ -122,7 +122,7 @@ public class Main2{
                         break;
 
                         case 4: //View borrowed
-                        Library1.DisplayBorrowedItems(username); 
+                        userBI.displayBorrowers(username); 
                         break;
 
                         case 5:
@@ -180,7 +180,7 @@ public class Main2{
         } //END BRACKET OF SWITCH
         
     }
-    while (choice1 != 3);
+    while (choice != 3);
 
     }
 }   
