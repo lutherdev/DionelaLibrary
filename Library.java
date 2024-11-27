@@ -16,9 +16,6 @@ public class Library {
 
     Scanner input = new Scanner(System.in);
     accounts account;
-
-    private ArrayList<BorrowedItems> borrowInfoListCopy = new ArrayList<>(); // arraylist para sa borrowed items
-    private ArrayList<accounts> accListCopy; // DECLARE AN ARRAYLIST WITHOUT POINTIN IT TO SOMETH YET
     private ArrayList<Library> availableItems = new ArrayList<>(); // arrayList para sa items
 
     private int accounts = 0; // pang loop
@@ -35,31 +32,12 @@ public class Library {
         this.quantity = quantity;
     }
 
-    public Library(accounts e) { // mag iinitialize muna ng size ng library (kung ilang items sa laman ng
-        this.account = e; // the object passed is used here as reference, so the account object here now
-                          // also points to the account in the main (MAY 2 ACCOUNTS CREATED KASE WHICH IS
-                          // SA MAIN CLASS AND LIBRARY CLASS)
-        this.accListCopy = account.getAccDataList(); // for populating this arraylist in this class
-
-        fileTOlist();
-        // studentArray = new accounts[200]; // initialize ng arraylist, pra dto istore
-        // yunng nagborrow na customer
-    }
-
     public Library() {
         System.out.println("Normal Constructor");
         fileTOlist();
     }
 
     // METHODS
-
-    public ArrayList<Library> getItemDataList() { // THIS JUST GIVES YOU A COPY BUT WILL NOT BE ABLE TO CHANGE THE
-                                                  // ACTUAL DATA
-        // KUMBAGA PASS BY VALUE LANG,,, NOT PASS BY REFERENCE
-        // Return an unmodifiable view to protect the original list
-
-        return new ArrayList<>(availableItems);
-    }
 
     private int generateItemId() { // pang generate ng item id
         return ++itemId;
@@ -82,7 +60,6 @@ public class Library {
             if (availableItems.get(i).getItemId() == removeId) { // hahanapin kung match yung ID na ininput ng user sa
                                                                  // arraylist
                 itemFound = true;
-
                 availableItems.remove(i);
                 saveItemsToFile();
                 System.out.println("Item " + removeId + " has been removed");
@@ -95,10 +72,8 @@ public class Library {
         if (!itemFound) {
             System.out.println("Item " + removeId + " not found");
         }
-
         displayInventory();
         // saveItemsToFile();
-
     }
 
     // add items
@@ -146,19 +121,7 @@ public class Library {
 
         if (newItem != null) {
             boolean ExistAlready = false;
-
             for (Library item : availableItems) {
-                /*
-                 * checheck muna yung availableItems na arraylist kung may existing naba na
-                 * name,author, at class(book,dvd,magazine), before mag add
-                 * pag same name, author, same class: idadagdag nalang sa quantity ng nasa list
-                 * yung ininput mo na quantity
-                 * pag wala: gagawa ng panibagong item
-                 * 
-                 * BALI PWEDE YUNG SAME NAME AT SAME CLASS as long as hindi sila same author
-                 * pwede rin same name at same author basta hindi sila same class
-                 */
-
                 if (item.getTitle().equals(newItem.getTitle()) && item.getCreator().equals(newItem.getCreator())
                         && item.getClass().equals(newItem.getClass())) {
                     item.increaseQuantity(quantity);
@@ -183,26 +146,18 @@ public class Library {
                     Book book = (Book) item;
                     writer.write(book.getItemId() + ", " + book.getTitle() + ", " + book.getCreator() + ", "
                             + book.getQuantity() + ", " + itemType + ", " + book.getPages() + "\n");
-
                 }
-
                 else if (item instanceof Magazine) {
                     Magazine magazine = (Magazine) item;
                     writer.write(magazine.getItemId() + ", " + magazine.getTitle() + ", " + magazine.getCreator() + ", "
                             + magazine.getQuantity() + ", " + itemType + ", " + magazine.getIssueNumber() + "\n");
-
                 }
-
                 else if (item instanceof DVD) {
                     DVD dvd = (DVD) item;
-
                     writer.write(dvd.getItemId() + ", " + dvd.getTitle() + ", " + dvd.getCreator() + ", "
                             + dvd.getQuantity() + ", " + itemType + ", " + dvd.getHours() + "\n");
-
                 }
-
             }
-
             writer.close();
             System.out.println("ITEMS SUCCESS UPDATED TO FILE..\n");
         } catch (IOException e) {
@@ -259,20 +214,6 @@ public class Library {
 
     public void displayInventory() { // display inventory
         System.out.println("\t---------------Available Items----------------");
-
-      
-
-            // if (availableItems.size() == 0) {
-            //     System.out.println("Inventory is currently empty...");
-            // } else {
-            //     System.out.println("List of Items available: ");
-            //     for (Library items : availableItems) {
-            //         items.displayInfo(); // display muna mga items sa library
-            //     }
-            // }
-
-
-        // Adjust the format to add "Creator" column
         System.out.printf("%-10s %-30s %-20s %-10s%n", "Item ID", "Title", "Creator", "Quantity"); // Added Creator
                                                                                                    // column
         System.out.println("----------------------------------------------------");
@@ -288,6 +229,42 @@ public class Library {
         }
     }
 
+    public void displayInfo() { // iooverride ng mga children
+        System.out.println("Item ID: " + getItemId());
+        System.out.println("Title: " + getTitle());
+        System.out.println("Creator: " + getCreator());
+        System.out.println("Quantity: " + getQuantity());
+    }
+
+    public void borrowItem(int quantity, int itemId) {
+        Scanner scan = new Scanner(System.in);
+            for (Library items : availableItems) {
+                if (items.getItemId() == itemId) { // PUT A CONDITION NA KAPAG MERON PANG QUANTITY OR WALA
+                    if (items.getQuantity() >= quantity && quantity > 0) {
+                        items.quantity = (items.quantity - quantity);
+                        System.out.println("\nUpdated Quantity of "+ items.getTitle() + ": " + items.getQuantity());
+                        saveItemsToFile();
+                        break;
+                    } else {
+                        System.out.println("Not enough quantity available.");
+                    }
+                }
+            }
+    }
+
+    // RETURNING METHODSSS
+    public void returnItem(int itemId, int quantity) {
+        for (Library item : availableItems) {
+            if (item.getItemId() == itemId) {
+            item.quantity = (item.quantity + quantity);
+            System.out.println("Item " + item.getTitle() + " with ID " + itemId + " has been returned");
+            System.out.println("New quantity: " + item.getQuantity()); // pang check lang
+            saveItemsToFile();
+            System.out.println("UPDATE QUANTITY SUCCESS");
+            break;
+            }
+        }
+    }
     public int getItemId() {
         return itemId;
     }
@@ -310,68 +287,6 @@ public class Library {
 
     public void setQuantity(int quantity) { // pra sa Quantityyy
         this.quantity = quantity;
-
-    }
-
-    // public String toFileFormat() {
-    // return this.getClass().getSimpleName() + "," + this.itemId + "," + this.title
-    // + "," + this.creator + "," + this.quantity;
-    // }
-
-    public void displayInfo() { // iooverride ng mga children
-        System.out.println("Item ID: " + getItemId());
-        System.out.println("Title: " + getTitle());
-        System.out.println("Creator: " + getCreator());
-        System.out.println("Quantity: " + getQuantity());
-
-    }
-
-    BorrowedItems borrowItemInfo = null; // pra di magnull pointer exception
-
-
-
-
-    public void borrowItem(int quantity, int itemId) {
-        Scanner scan = new Scanner(System.in);
-            for (Library items : availableItems) {
-                if (items.getItemId() == itemId) { // PUT A CONDITION NA KAPAG MERON PANG QUANTITY OR WALA
-                    if (items.getQuantity() >= quantity && quantity > 0) {
-                        items.quantity = (items.quantity - quantity);
-                        System.out.println("\nUpdated Quantity of "+ items.getTitle() + ": " + items.getQuantity());
-                        saveItemsToFile();
-                        break;
-                    } else {
-                        System.out.println("Not enough quantity available.");
-                    }
-                }
-            }
-    }
-
-    // // test
-    public void DisplayBorrowedItems(String name) {
-        borrowItemInfo = new BorrowedItems("", 0, 0); // para di mag null pointer exception
-        borrowItemInfo.fileTolistBorrow(); // for populating the arraylist
-        borrowItemInfo.displayBorrowers(name);
-    }
-
-    // RETURNING METHODSSS
-    public void returnItem(int itemId, int quantity) {
-        for (Library item : availableItems) {
-            if (item.getItemId() == itemId) {
-            item.quantity = (item.quantity + quantity);
-            System.out.println("Item " + item.getTitle() + " with ID " + itemId + " has been returned");
-            System.out.println("New quantity: " + item.getQuantity()); // pang check lang
-            saveItemsToFile();
-            System.out.println("UPDATE QUANTITY SUCCESS");
-            break;
-            }
-        }
-    }
-
-    public void clearScreen() {
-        for (int i = 0; i < 50; i++) {
-            System.out.println();
-        }
     }
 
 }
